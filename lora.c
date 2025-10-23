@@ -555,10 +555,12 @@ int lora_receive_packet(uint8_t *buf, size_t size)
     lora_write_reg(REG_IRQ_FLAGS, irq);
     
     if((irq & IRQ_RX_DONE_MASK) == 0)  {
+        level_log(ERROR, "Lora Has Not Received Anything");
         REMOVE_FROM_STACK_DEPTH();
         return -1;
     }
     if(irq & IRQ_PAYLOAD_CRC_ERROR_MASK) {
+        level_log(ERROR, "Lora Incorrect CRC");
         REMOVE_FROM_STACK_DEPTH();
         return -1;
     }
