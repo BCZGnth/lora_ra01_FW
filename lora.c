@@ -447,13 +447,11 @@ int lora_init(LoraDefines args, LoraConfigs config)
     lora_write_chip_select(1);
     lora_reset();
 
-    /* Put the Lora in Standby mode so that we can write to the device regiseters */
-    // lora_idle();
-    // uint8_t mode_try_ctr = 10;
-    // while(mode_try_ctr--) {
-        lora_write_reg(REG_OP_MODE, 0x80);
-    //     __delay_ms(5);
-    // }
+    /* Put the Lora in sleep mode (0x80) so that we can write to the device regiseters 
+       The lora does not take register configuration changes in standby mode (0x81) */
+
+    lora_write_reg(REG_OP_MODE, 0x80);
+
 
     uint8_t mode = lora_read_reg(REG_OP_MODE);
     level_log(INFO, "Mode is set to: 0x%x", mode);
@@ -516,7 +514,7 @@ void lora_send_packet(uint8_t *buf, size_t size)
     for(int i=0; i<size; i++) 
        lora_write_reg(REG_FIFO, *buf++);
 
-    /* if the size is greater than 255, this will write the wrong value to the LoRa*/
+    /* if the size is greater than 255, this will write the wrong value to the LoRa */
     lora_write_reg(REG_PAYLOAD_LENGTH, (uint8_t)size);
 
     /*
