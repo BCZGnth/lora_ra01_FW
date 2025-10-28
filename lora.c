@@ -660,7 +660,7 @@ void lora_close(void)
 void lora_dump_registers(void)
 {
     uint8_t i;
-    for(i=0; i<0x26; i++) {
+    for(i=0; i<0x40; i++) {
        printf("%02x -> %02x\n", i, lora_read_reg(i));
     }
 }
