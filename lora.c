@@ -547,13 +547,13 @@ int lora_receive_packet(uint8_t *buf, size_t size)
     lora_set_frequency(__rx_frequency);
 
     /*
-    * Check interrupts.
-    */
+     * Check interrupts.
+     */
     uint8_t irq = lora_read_reg(REG_IRQ_FLAGS);
     lora_write_reg(REG_IRQ_FLAGS, irq);
     
     if((irq & IRQ_RX_DONE_MASK) == 0)  {
-        level_log(ERROR, "Lora Has Not Received Anything");
+        level_log(ERROR, "Lora IRQ not set. Device Has Not Received Anything");
         REMOVE_FROM_STACK_DEPTH();
         return -1;
     }
@@ -562,16 +562,18 @@ int lora_receive_packet(uint8_t *buf, size_t size)
         REMOVE_FROM_STACK_DEPTH();
         return -1;
     }
+    
     /*
-    * Find packet size.
-    */
+     * Find packet size.
+     */
     lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
     if (__implicit) len = lora_read_reg(REG_PAYLOAD_LENGTH);
     else len = lora_read_reg(REG_RX_NB_BYTES);
+    level_log(TRACE, "Length of received buffer is %d", len);
 
     /*
-    * Transfer data from radio.
-    */
+     * Transfer data from radio.
+     */
     lora_write_reg(REG_FIFO_ADDR_PTR, lora_read_reg(REG_FIFO_RX_CURRENT_ADDR));
     if(len > size) len = (int)size;
     for(i = 0; i < len; i++) {
