@@ -77,7 +77,10 @@ void lora_spi_read(uint8_t reg, uint8_t * buf, size_t len) {
 
     ADD_TO_STACK_DEPTH();
     level_log(TRACE, "LORA_SPI - Reading...");
-    if(len > MAX_BUFFER_SIZE) {level_log(ERROR, "Cannot write more than %d bytes to the I2C buffer", MAX_BUFFER_SIZE);}
+
+    if(len > MAX_BUFFER_SIZE) {
+        level_log(ERROR, "Cannot write more than %d bytes to the I2C buffer", MAX_BUFFER_SIZE);
+    }
     
 
     /* Start a data transmission by pulling the Chip Select low*/
