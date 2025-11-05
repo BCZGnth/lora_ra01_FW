@@ -588,6 +588,50 @@ int lora_receive_packet(uint8_t *buf, size_t size)
     return len;
 }
 
+int lora_fifo_read(uint8_t *buf, size_t size)
+{
+    ADD_TO_STACK_DEPTH();
+    level_log(TRACE, "LORA - receiving packet...");
+
+   int i, len = 0;
+
+    /* Set frequency to listening frequency of Whatever... */
+    lora_set_frequency(__rx_frequency);
+
+    /*
+     * Check interrupts.
+     */
+    uint8_t irq = lora_read_reg(REG_IRQ_FLAGS);
+    lora_write_reg(REG_IRQ_FLAGS, irq);
+
+    if(irq & IRQ_PAYLOAD_CRC_ERROR_MASK) {
+        level_log(ERROR, "Lora Incorrect CRC");
+        REMOVE_FROM_STACK_DEPTH();
+        return -1;
+    }
+    
+    /*
+     * Find packet size.
+     */
+    lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
+    if (__implicit) len = lora_read_reg(REG_PAYLOAD_LENGTH);
+    else len = lora_read_reg(REG_RX_NB_BYTES);
+    level_log(TRACE, "Length of received buffer is %d", len);
+
+    /*
+     * Transfer data from radio.
+     */
+    lora_write_reg(REG_FIFO_ADDR_PTR, lora_read_reg(REG_FIFO_RX_CURRENT_ADDR));
+    if(len > size) len = (int)size;
+    for(i = 0; i < len; i++) {
+        *(buf++) = lora_read_reg(REG_FIFO);
+    }
+
+    level_log(TRACE, "LORA - read from FIFO Buffer");
+    REMOVE_FROM_STACK_DEPTH();
+    return len;
+}
+
 /**
  * Returns non-zero if there is data to read (packet received).
  */
