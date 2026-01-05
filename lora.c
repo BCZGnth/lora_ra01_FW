@@ -1,5 +1,5 @@
 #include "lora.h"
-#include "SoftSPI.h"
+#include "lora_SoftSPI.h"
 #include "dummy_defines.h"
 #include "logger.h"
 #include "system.h"
@@ -49,12 +49,13 @@ void lora_spi_write(uint8_t reg, uint8_t * buf, size_t len) {
     reg |= 0x80;
 
     /* Write the register over SPI with the write bit set to indicate write to the register */
-    fast_SPI_Write(reg, SOFT_SPI_MSB_FIRST);
+    lora_fast_spi_write_byte(reg);
     
     /* Write the buffer over the SPI data line */
-    for(int i = 0; i < len; i++) {
-        fast_SPI_Write(*(buf + i), SOFT_SPI_MSB_FIRST);
-    }
+        // for(int i = 0; i < len; i++) {
+        //     lora_fast_spi_write(*(buf + i), SOFT_SPI_MSB_FIRST);
+        // }
+    lora_fast_spi_write_buffer(buf, len);
 
     /* End the transmission by setting the Chip Select high */
     // __delay_us(100); // Minimum time before CS goes high after falling edge of clock is 100us. (see section 2.5.6 of the datasheet)
@@ -91,13 +92,14 @@ void lora_spi_read(uint8_t reg, uint8_t * buf, size_t len) {
     reg &= 0x7f;
 
     /* Write the register over SPI with the write bit set to indicate a read to the register */
-    fast_SPI_Write(reg, SOFT_SPI_MSB_FIRST);
+    lora_fast_spi_write_byte(reg);
     
     /* Write the buffer over the SPI data line */
-    for(int i = 0; i < len; i++) {
-        indata = fast_SPI_Read();
-        memset( (buf + i), indata, 1);
-    }
+        // for(int i = 0; i < len; i++) {
+        //     indata = lora_fast_spi_read_byte();
+        //     memset( (buf + i), indata, 1);
+        // }
+    lora_fast_spi_read_buffer(buf, len);
 
     /* End the transmission by setting the Chip Select high */
     // __delay_us(100); // Minimum time before CS goes high after falling edge of clock is 100us. (see section 2.5.6 of the datasheet)
@@ -437,10 +439,10 @@ int lora_init(LoraDefines args, LoraConfigs config)
      * Perform hardware reset/initialization.
      */
     /* This basically mimics the SoftSPI_Init function */
-    SoftSPI_InitDataOutPin(port.mosi_port, port.mosi_pin);
-    SoftSPI_InitDataInPin(port.miso_port, port.miso_pin);
-    SoftSPI_InitClockPin(port.clock_port, port.clock_pin);
-    SoftSPI_InitSelectPin(port.select_port, port.select_pin);
+    // lora_SoftSPI_InitDataOutPin(port.mosi_port, port.mosi_pin);
+    // lora_SoftSPI_InitDataInPin(port.miso_port, port.miso_pin);
+    // lora_SoftSPI_InitClockPin(port.clock_port, port.clock_pin);
+    // lora_SoftSPI_InitSelectPin(port.select_port, port.select_pin);
 
     /* Set the talk and recieve frequencies */
     __tx_frequency = args.tx_frequency;
