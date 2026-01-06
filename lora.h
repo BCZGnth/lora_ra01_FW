@@ -132,7 +132,7 @@ void    lora_set_preamble_length(long length);
 void    lora_set_sync_word(uint8_t sw);
 void    lora_enable_crc(void);
 void    lora_disable_crc(void);
-void    lora_set_pins(char *spidev, int cs, int rst, int irq);
+// void    lora_set_pins(char *spidev, int cs, int rst, int irq);
 void    lora_write_chip_select(uint8_t state);
 void    lora_pins_idle(void);
 int     lora_init(LoraDefines args, LoraConfigs config);
