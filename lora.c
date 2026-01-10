@@ -40,7 +40,7 @@ int lora_initialized(void)
 void lora_spi_write(uint8_t reg, uint8_t * buf, size_t len) {
 
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE, "LORA_SPI - Writing...");
+    // level_log(TRACE, "LORA_SPI - Writing...");
 
     /* Start a data transmission by pulling the Chip Select low*/
     lora_write_chip_select(LOW);
@@ -63,7 +63,7 @@ void lora_spi_write(uint8_t reg, uint8_t * buf, size_t len) {
     // *(port.mosi_port) |= (1 << port.mosi_pin);
     LORA_MOSI_SetHigh();
 
-    level_log(TRACE, "LORA_SPI - Write complete");
+    // level_log(TRACE, "LORA_SPI - Write complete");
     REMOVE_FROM_STACK_DEPTH();
 }
 
@@ -78,11 +78,11 @@ void lora_spi_read(uint8_t reg, uint8_t * buf, size_t len) {
     uint8_t indata;
 
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE, "LORA_SPI - Reading...");
+    // level_log(TRACE, "LORA_SPI - Reading...");
 
     if(len > MAX_BUFFER_SIZE) {
-        level_log(ERROR, "Cannot write more than bytes to the I2C buffer:");
-        printf("%d", MAX_BUFFER_SIZE);
+        // level_log(ERROR, "Cannot write more than bytes to the I2C buffer:");
+        // printf("%d", MAX_BUFFER_SIZE);
     }
     
 
@@ -109,7 +109,7 @@ void lora_spi_read(uint8_t reg, uint8_t * buf, size_t len) {
     // *(port.mosi_port) |= (1 << port.mosi_pin);
     LORA_MOSI_SetHigh();
 
-    level_log(TRACE, "LORA_SPI - Read complete");
+    // level_log(TRACE, "LORA_SPI - Read complete");
     REMOVE_FROM_STACK_DEPTH();
 }
 
@@ -122,8 +122,8 @@ void lora_spi_read(uint8_t reg, uint8_t * buf, size_t len) {
 void lora_write_reg(uint8_t reg, uint8_t val)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE, "LORA - Writing to register:");
-    printf("0x%X", reg);
+    // level_log(TRACE, "LORA - Writing to register:");
+    // printf("0x%X", reg);
 
     // LATA |= (1 << 2);
 
@@ -131,8 +131,8 @@ void lora_write_reg(uint8_t reg, uint8_t val)
 
     // LATA &= ~(1 << 2);
 
-    level_log(TRACE , "LORA - Wrote to register:");
-    printf("0x%X", val);
+    // level_log(TRACE , "LORA - Wrote to register:");
+    // printf("0x%X", val);
     REMOVE_FROM_STACK_DEPTH();
 }
 
@@ -144,16 +144,16 @@ void lora_write_reg(uint8_t reg, uint8_t val)
 uint8_t lora_read_reg(uint8_t reg)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE , "LORA - Reading from register:");
-    printf("0x%X...", reg);
+    // level_log(TRACE , "LORA - Reading from register:");
+    // printf("0x%X...", reg);
     uint8_t in;
 
     /* Since this is a hard-coded register-write,
     The write length will always be 2  */
     lora_spi_read(reg, &in, 1);
 
-    level_log(TRACE , "LORA - Read from register:");
-    printf("0x%X", in);
+    // level_log(TRACE , "LORA - Read from register:");
+    // printf("0x%X", in);
     REMOVE_FROM_STACK_DEPTH();
 
     return in;
@@ -165,10 +165,10 @@ uint8_t lora_read_reg(uint8_t reg)
 void lora_reset(void)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE, "LORA - RESETTING CHIP...");
+    // level_log(TRACE, "LORA - RESETTING CHIP...");
     
     if(__initialized) {
-        level_log(TRACE, " LORA already powered. manipulating reset line...");
+        // level_log(TRACE, " LORA already powered. manipulating reset line...");
         /* If the LoRa is already initialized, then the processor should manipulate the reset line
            as per section 7 of the datasheet */
         LORA_RST_SetDigitalOutput();
@@ -179,7 +179,7 @@ void lora_reset(void)
         __delay_ms(6); // Datasheet says delay 5ms, so we are waiting one more milisecond to be safe.
     } else {
 
-    level_log(TRACE, " LORA reset on powerup. listening for the reset line...");
+    // level_log(TRACE, " LORA reset on powerup. listening for the reset line...");
     /* If the LORA is not initialized */
 
         /* Set VDD low to start a proper powerup sequence */
@@ -209,7 +209,7 @@ void lora_reset(void)
         while(lora_reset_value == 0){
             __delay_ms(1);
             lora_reset_value = LORA_RST_GetValue(); // Brandon, before you comment on this code being ineffieicent because it could just be written while( ~(LORA_RST_GetValue()) ) {...}, that doesn't work because the compiler doesn't "see" the value of the macro-like function, LORA_RST_GetValue(), as something that can change, so this gets compiled as while(1) because the LORA_RST pin is already low when this while loop runs. Basically that value only gets checked once, hence the volatile variable.
-            level_log(TRACE, "RESET line is %d", lora_reset_value);
+            // level_log(TRACE, "RESET line is %d", lora_reset_value);
         }
         #endif // DATASHEET_RESET 
 
@@ -219,7 +219,7 @@ void lora_reset(void)
         /* After the reset is driven high by the RA-01, wait 20ms before doing anything else */
         __delay_ms(20);
 
-        level_log(TRACE, "LORA - RESET CHIP");
+        // level_log(TRACE, "LORA - RESET CHIP");
         REMOVE_FROM_STACK_DEPTH();
     }
 }
@@ -293,8 +293,8 @@ void lora_set_tx_power(uint8_t level)
 void lora_set_frequency(long frequency)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE , "LORA - Setting frequency to:");
-    printf("0x%llx", (long long)(frequency));
+    // level_log(TRACE , "LORA - Setting frequency to:");
+    // printf("0x%llx", (long long)(frequency));
     // __tx_frequency = frequency;
 
    unsigned long long frf = (((unsigned long long)(frequency) << 19) / 32000000);
@@ -302,7 +302,7 @@ void lora_set_frequency(long frequency)
    lora_write_reg(REG_FRF_MSB, (uint8_t)(frf >> 16));
    lora_write_reg(REG_FRF_MID, (uint8_t)(frf >> 8));
    lora_write_reg(REG_FRF_LSB, (uint8_t)(frf >> 0));
-   level_log(TRACE , "LORA - Set Frequency");
+   // level_log(TRACE , "LORA - Set Frequency");
    REMOVE_FROM_STACK_DEPTH();
 }
 
@@ -313,8 +313,8 @@ void lora_set_frequency(long frequency)
 void lora_set_spreading_factor(int sf)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE , "LORA - Setting spreading factor to:");
-    printf("%d", sf);
+    // level_log(TRACE , "LORA - Setting spreading factor to:");
+    // printf("%d", sf);
     if (sf < 6) sf = 6;
     else if (sf > 12) sf = 12;
 
@@ -327,7 +327,7 @@ void lora_set_spreading_factor(int sf)
     }
 
     lora_write_reg(REG_MODEM_CONFIG_2, (lora_read_reg(REG_MODEM_CONFIG_2) & 0x0f) | ((sf << 4) & 0xf0));
-    level_log(TRACE , "LORA - Set Frequency");
+    // level_log(TRACE , "LORA - Set Frequency");
     REMOVE_FROM_STACK_DEPTH();
 }
 
@@ -338,8 +338,8 @@ void lora_set_spreading_factor(int sf)
 void lora_set_bandwidth(long sbw)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE , "LORA - Setting bandwidth to:");
-    printf("%d", sbw);
+    // level_log(TRACE , "LORA - Setting bandwidth to:");
+    // printf("%d", sbw);
     uint8_t bw;
  
     if (sbw <= (long)7.8E3) bw = 0;
@@ -354,7 +354,7 @@ void lora_set_bandwidth(long sbw)
     else bw = 9;
     
     lora_write_reg(REG_MODEM_CONFIG_1, (uint8_t)((uint8_t)(lora_read_reg(REG_MODEM_CONFIG_1) & 0x0f)) | (uint8_t)(bw << 4));
-    level_log(TRACE , "LORA - Set bandwidth");
+    // level_log(TRACE , "LORA - Set bandwidth");
     REMOVE_FROM_STACK_DEPTH();
 }
 
@@ -365,15 +365,15 @@ void lora_set_bandwidth(long sbw)
 void lora_set_coding_rate(int denominator)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE , "LORA - Setting coding rate to:");
-    printf("%d", denominator);
+    // level_log(TRACE , "LORA - Setting coding rate to:");
+    // printf("%d", denominator);
     if (denominator < 5) denominator = 5;
     else if (denominator > 8) denominator = 8;
 
     uint8_t cr = (uint8_t)(denominator - 4);
 
     lora_write_reg(REG_MODEM_CONFIG_1, (uint8_t)((uint8_t)(lora_read_reg(REG_MODEM_CONFIG_1) & 0xf1)) | (uint8_t)(cr << 1));
-    level_log(TRACE , "LORA - Set coding rate");
+    // level_log(TRACE , "LORA - Set coding rate");
     REMOVE_FROM_STACK_DEPTH();
 }
 
@@ -446,7 +446,7 @@ void lora_pins_idle(){
 int lora_init(LoraDefines args, LoraConfigs config)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE , "LORA - Initialize");
+    // level_log(TRACE , "LORA - Initialize");
 
     // port = args.port;
     /* set the pins to the idle state before initializing */
@@ -476,8 +476,8 @@ int lora_init(LoraDefines args, LoraConfigs config)
 
 
     uint8_t mode = lora_read_reg(REG_OP_MODE);
-    level_log(INFO, "Mode is set to:");
-    printf("0x%x", mode);
+    // level_log(INFO, "Mode is set to:");
+    // printf("0x%x", mode);
 
     /*
      * Check version.
@@ -485,7 +485,7 @@ int lora_init(LoraDefines args, LoraConfigs config)
     #warning LoRa version is being checked. This program WILL crash if the version is wrong, or if the SPI read is wrong. 
     uint8_t version = 0;
     version = lora_read_reg(REG_VERSION);
-    printf("%x", version);
+    // printf("%x", version);
     assert(version == 0x12);
 
     /*
@@ -512,7 +512,7 @@ int lora_init(LoraDefines args, LoraConfigs config)
 
     __initialized = 1;
 
-    level_log(TRACE , "LORA - Initialization complete");
+    // level_log(TRACE , "LORA - Initialization complete");
     REMOVE_FROM_STACK_DEPTH();
 
     return __initialized;
@@ -526,7 +526,7 @@ int lora_init(LoraDefines args, LoraConfigs config)
 void lora_send_packet(uint8_t *buf, size_t size)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE, "LORA - sending packet...");
+    // level_log(TRACE, "LORA - sending packet...");
     /* Set frequency to sending frequency of 425000000 */
     lora_set_frequency(__tx_frequency);
 
@@ -551,7 +551,7 @@ void lora_send_packet(uint8_t *buf, size_t size)
     }
     lora_write_reg(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
 
-    level_log(TRACE, "LORA - sent packet");
+    // level_log(TRACE, "LORA - sent packet");
     REMOVE_FROM_STACK_DEPTH();
 }
 
@@ -564,7 +564,7 @@ void lora_send_packet(uint8_t *buf, size_t size)
 int lora_receive_packet(uint8_t *buf, size_t size)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE, "LORA - receiving packet...");
+    // level_log(TRACE, "LORA - receiving packet...");
 
    int i, len = 0;
     
@@ -578,12 +578,12 @@ int lora_receive_packet(uint8_t *buf, size_t size)
     lora_write_reg(REG_IRQ_FLAGS, irq);
     
     if((irq & IRQ_RX_DONE_MASK) == 0)  {
-        level_log(ERROR, "Lora IRQ not set. Device Has Not Received Anything");
+        // level_log(ERROR, "Lora IRQ not set. Device Has Not Received Anything");
         REMOVE_FROM_STACK_DEPTH();
         return -1;
     }
     if(irq & IRQ_PAYLOAD_CRC_ERROR_MASK) {
-        level_log(ERROR, "Lora Incorrect CRC");
+        // level_log(ERROR, "Lora Incorrect CRC");
         REMOVE_FROM_STACK_DEPTH();
         return -1;
     }
@@ -594,8 +594,8 @@ int lora_receive_packet(uint8_t *buf, size_t size)
     lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
     if (__implicit) len = lora_read_reg(REG_PAYLOAD_LENGTH);
     else len = lora_read_reg(REG_RX_NB_BYTES);
-    level_log(TRACE, "Length of received buffer is:");
-    printf("%d", len);
+    // level_log(TRACE, "Length of received buffer is:");
+    // printf("%d", len);
 
     /*
      * Transfer data from radio.
@@ -606,7 +606,7 @@ int lora_receive_packet(uint8_t *buf, size_t size)
         *(buf++) = lora_read_reg(REG_FIFO);
     }
 
-    level_log(TRACE, "LORA - received packet");
+    // level_log(TRACE, "LORA - received packet");
     REMOVE_FROM_STACK_DEPTH();
     return len;
 }
@@ -614,7 +614,7 @@ int lora_receive_packet(uint8_t *buf, size_t size)
 int lora_fifo_read(uint8_t *buf, size_t size)
 {
     ADD_TO_STACK_DEPTH();
-    level_log(TRACE, "LORA - receiving packet...");
+    // level_log(TRACE, "LORA - receiving packet...");
 
    int i, len = 0;
 
@@ -628,7 +628,7 @@ int lora_fifo_read(uint8_t *buf, size_t size)
     lora_write_reg(REG_IRQ_FLAGS, irq);
 
     if(irq & IRQ_PAYLOAD_CRC_ERROR_MASK) {
-        level_log(ERROR, "Lora Incorrect CRC");
+        // level_log(ERROR, "Lora Incorrect CRC");
         REMOVE_FROM_STACK_DEPTH();
         return -1;
     }
@@ -639,8 +639,8 @@ int lora_fifo_read(uint8_t *buf, size_t size)
     lora_write_reg(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
     if (__implicit) len = lora_read_reg(REG_PAYLOAD_LENGTH);
     else len = lora_read_reg(REG_RX_NB_BYTES);
-    level_log(TRACE, "Length of received buffer is:");
-    printf("%d", len);
+    // level_log(TRACE, "Length of received buffer is:");
+    // printf("%d", len);
 
     /*
      * Transfer data from radio.
@@ -651,7 +651,7 @@ int lora_fifo_read(uint8_t *buf, size_t size)
         *(buf++) = lora_read_reg(REG_FIFO);
     }
 
-    level_log(TRACE, "LORA - read from FIFO Buffer");
+    // level_log(TRACE, "LORA - read from FIFO Buffer");
     REMOVE_FROM_STACK_DEPTH();
     return len;
 }
@@ -734,7 +734,7 @@ void lora_dump_registers(void)
 {
     uint8_t i;
     for(i=0; i<0x40; i++) {
-       printf("%02x -> %02x\n", i, lora_read_reg(i));
+       // printf("%02x -> %02x\n", i, lora_read_reg(i));
     }
 }
 
