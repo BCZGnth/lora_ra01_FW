@@ -1,0 +1,3 @@
+[submodule "LightAES"]
+	path = LightAES
+	url = https://github.com/BCZGnth/LightAES.git

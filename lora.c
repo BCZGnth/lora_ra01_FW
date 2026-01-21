@@ -3,6 +3,7 @@
 #include "dummy_defines.h"
 #include "logger.h"
 #include "system.h"
+#include "aes.h"
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
@@ -16,6 +17,8 @@ static long __rx_frequency;
 static int __initialized = 0;
 
 static LoraPortDefines port;
+
+static const uint8_t aes_key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5};
 
 /*
  * Asynchronous API
@@ -609,6 +612,17 @@ int lora_receive_packet(uint8_t *buf, size_t size)
     // level_log(TRACE, "LORA - received packet");
     REMOVE_FROM_STACK_DEPTH();
     return len;
+}
+
+int lora_encrypt_receive(uint8_t * buf, size_t size) {
+    int bytes_received = lora_receive_packet(buf, size);
+    aes_ecb_decrypt(buf, aes_key, size);
+    return bytes_received;
+}
+
+void lora_encrypt_send(uint8_t * buf, size_t size) {
+    aes_ecb_encrypt(buf, aes_key, size);
+    lora_send_packet(buf, size);
 }
 
 int lora_fifo_read(uint8_t *buf, size_t size)
