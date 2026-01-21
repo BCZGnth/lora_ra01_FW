@@ -614,7 +614,7 @@ int lora_receive_packet(uint8_t *buf, size_t size)
     return len;
 }
 
-int lora_encrypt_receive(uint8_t * buf, size_t size) {
+int lora_decrypt_receive(uint8_t * buf, size_t size) {
     int bytes_received = lora_receive_packet(buf, size);
     aes_ecb_decrypt(buf, aes_key, size);
     return bytes_received;

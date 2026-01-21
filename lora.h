@@ -138,7 +138,7 @@ void    lora_pins_idle(void);
 int     lora_init(LoraDefines args, LoraConfigs config);
 void    lora_send_packet(uint8_t *buf, size_t size);
 int     lora_receive_packet(uint8_t *buf, size_t size);
-int     lora_encrypt_receive(uint8_t * buf, size_t size);
+int     lora_decrypt_receive(uint8_t * buf, size_t size);
 void    lora_encrypt_send(uint8_t * buf, size_t size);
 int     lora_fifo_read(uint8_t *buf, size_t size);
 int     lora_received(void);
